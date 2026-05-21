@@ -4,7 +4,19 @@
 *   **Nombre del Sistema:** Damn Vulnerable RESTaurant API Game
 *   **Tipo de Aplicación:** API RESTful (Backend) construida con Python (FastAPI) y PostgreSQL.
 *   **Descripción General y Propósito:** Es una plataforma de entrenamiento desarrollada de forma intencionalmente insegura. Simula el sistema de gestión de un restaurante (creación de platos, órdenes, perfiles de usuario y asignación de roles como Chef o Empleado). Su propósito principal es servir como un entorno controlado ("caja de arena") para que ingenieros de software e investigadores de ciberseguridad puedan detectar, explotar y, posteriormente, mitigar vulnerabilidades basadas en el OWASP API Security Top 10.
+ 
+## Contexto del Problema
+Las interfaces de programación de aplicaciones (APIs) se han convertido en el eje central de los sistemas de software modernos, permitiendo la comunicación entre componentes, la integración con terceros y la exposición de funcionalidades de negocio a través de la red. Sin embargo, esta centralidad las convierte también en uno de los vectores de ataque más explotados en la actualidad.
 
+En el sector de restaurantes, la digitalización de operaciones críticas —como el registro de usuarios, la autenticación, la administración del menú y el control de roles internos— a través de APIs web expone a las organizaciones a riesgos significativos si dichas interfaces no son diseñadas, implementadas y configuradas siguiendo principios de seguridad sólidos.
+
+El proyecto Damn Vulnerable RESTaurant API, construido con Python FastAPI y PostgreSQL, representa un entorno deliberadamente inseguro que reproduce vulnerabilidades reales identificadas en sistemas productivos del sector. Este sistema constituye el objeto de análisis del presente trabajo, cuyo propósito es identificar y relacionar sus fallas de seguridad con el estándar OWASP API Security Top 10 (2023), la referencia más actualizada y reconocida a nivel mundial para la evaluación de riesgos en APIs.
+
+El OWASP API Security Top 10 (2023) identifica las diez categorías de riesgo más críticas en APIs, entre las que se destacan: la autorización rota a nivel de objeto (API1), la autenticación deficiente (API2), la autorización rota a nivel de propiedades de objeto (API3), el consumo irrestricto de recursos (API4), la autorización rota a nivel de función (API5), el acceso irrestricto a flujos de negocio sensibles (API6), la falsificación de solicitudes del lado del servidor (API7), la mala configuración de seguridad (API8), la gestión inadecuada del inventario de APIs (API9) y el consumo inseguro de APIs de terceros (API10).
+
+La explotación de cualquiera de estas vulnerabilidades en el contexto de la plataforma analizada puede comprometer la confidencialidad de datos de usuarios y del negocio, la integridad de las operaciones (como la manipulación del menú o la escalada de privilegios), y la disponibilidad del servicio, con consecuencias directas sobre la confianza de los clientes y la responsabilidad legal de la organización.
+
+El equipo de ingeniería de software tiene como misión realizar un análisis técnico sistemático de las vulnerabilidades presentes en el sistema, clasificarlas según el estándar mencionado y proponer soluciones concretas que reduzcan el nivel de riesgo a uno aceptable para la operación segura del negocio.
 ---
 
 ## Análisis de Vulnerabilidades Encontradas
