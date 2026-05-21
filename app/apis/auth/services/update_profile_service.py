@@ -24,11 +24,11 @@ def update_profile(
     current_user: Annotated[User, Depends(get_current_user)],
     db: Session = Depends(get_db),
 ):
-    db_user = get_user_by_username(db, user.username)
+    db_user = current_user
+    update_date= user.dict(exclude_unset=True)
 
-    for var, value in user.dict().items():
-        if value:
-            setattr(db_user, var, value)
+    for var, value in update_date.items():
+        setattr(db_user, var, value)
 
     db.add(db_user)
     db.commit()
