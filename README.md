@@ -8,7 +8,7 @@
 ## Contexto del Problema
 Las interfaces de programación de aplicaciones (APIs) se han convertido en el eje central de los sistemas de software modernos, permitiendo la comunicación entre componentes, la integración con terceros y la exposición de funcionalidades de negocio a través de la red. Sin embargo, esta centralidad las convierte también en uno de los vectores de ataque más explotados en la actualidad.
 
-En el sector de restaurantes, la digitalización de operaciones críticas —como el registro de usuarios, la autenticación, la administración del menú y el control de roles internos— a través de APIs web expone a las organizaciones a riesgos significativos si dichas interfaces no son diseñadas, implementadas y configuradas siguiendo principios de seguridad sólidos.
+En el sector de restaurantes, la digitalización de operaciones críticas como el registro de usuarios, la autenticación, la administración del menú y el control de roles internos a través de APIs web expone a las organizaciones a riesgos significativos si dichas interfaces no son diseñadas, implementadas y configuradas siguiendo principios de seguridad sólidos.
 
 El proyecto Damn Vulnerable RESTaurant API, construido con Python FastAPI y PostgreSQL, representa un entorno deliberadamente inseguro que reproduce vulnerabilidades reales identificadas en sistemas productivos del sector. Este sistema constituye el objeto de análisis del presente trabajo, cuyo propósito es identificar y relacionar sus fallas de seguridad con el estándar OWASP API Security Top 10 (2023), la referencia más actualizada y reconocida a nivel mundial para la evaluación de riesgos en APIs.
 
