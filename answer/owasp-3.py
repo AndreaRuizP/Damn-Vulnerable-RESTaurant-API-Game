@@ -26,6 +26,7 @@
 #     db_user = update_user(db, user.username, user)
 #     # return current_user
 
+#Código corregido
 from apis.auth.utils import RolesBasedAuthChecker, get_current_user, update_user
 from apis.users.schemas import UserRoleUpdate
 from db import models

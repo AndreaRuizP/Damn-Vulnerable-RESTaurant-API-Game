@@ -85,7 +85,7 @@ from fastapi import HTTPException
 def _image_url_to_base64(image_url: str):
     dominio = urlparse (image_url).hostname
     if dominio not in ["cdn.localhost"]:
-        raise HTTPException(satatus_code=403, detail="Only images from cdn.localhost are allowed")
+        raise HTTPException(status_code=403, detail="Only images from cdn.localhost are allowed")
     response = requests.get(image_url, stream=True)
     encoded_image = base64.b64encode(response.content).decode()
 
