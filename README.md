@@ -17,6 +17,7 @@ El OWASP API Security Top 10 (2023) identifica las diez categorías de riesgo m�
 La explotación de cualquiera de estas vulnerabilidades en el contexto de la plataforma analizada puede comprometer la confidencialidad de datos de usuarios y del negocio, la integridad de las operaciones (como la manipulación del menú o la escalada de privilegios), y la disponibilidad del servicio, con consecuencias directas sobre la confianza de los clientes y la responsabilidad legal de la organización.
 
 El equipo de ingeniería de software tiene como misión realizar un análisis técnico sistemático de las vulnerabilidades presentes en el sistema, clasificarlas según el estándar mencionado y proponer soluciones concretas que reduzcan el nivel de riesgo a uno aceptable para la operación segura del negocio.
+
 ---
 
 ## Análisis de Vulnerabilidades Encontradas
