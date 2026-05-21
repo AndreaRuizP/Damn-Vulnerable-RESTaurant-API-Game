@@ -1,58 +1,152 @@
-# from apis.auth.utils import RolesBasedAuthChecker, get_current_user, update_user
-# from apis.users.schemas import UserRoleUpdate
-# from db import models
-# from db.session import get_db
-# from fastapi import APIRouter, Depends, HTTPException, status
-# from sqlalchemy.orm import Session
-# from typing_extensions import Annotated
+# import base64
 
-# router = APIRouter()
+# import requests
+# from apis.menu import schemas
+# from db.models import MenuItem, OrderItem
+# from fastapi import HTTPException
 
 
-# @router.put("/users/update_role", response_model=UserRoleUpdate)
-# async def update_user_role(
-#     user: UserRoleUpdate,
-#     current_user: Annotated[models.User, Depends(get_current_user)],
-#     db: Session = Depends(get_db),
-    
+# def _image_url_to_base64(image_url: str):
+#     response = requests.get(image_url, stream=True)
+#     encoded_image = base64.b64encode(response.content).decode()
+
+#     return encoded_image
+
+
+# def create_menu_item(
+#     db,
+#     menu_item: schemas.MenuItemCreate,
 # ):
-#     # this method allows staff to give Employee role to other users
-#     # Chef role is restricted
-#     if user.role == models.UserRole.CHEF.value:
+#     menu_item_dict = menu_item.dict()
+#     image_url = menu_item_dict.pop("image_url", None)
+#     db_item = MenuItem(**menu_item_dict)
+
+#     if image_url:
+#         db_item.image_base64 = _image_url_to_base64(image_url)
+
+#     db.add(db_item)
+#     db.commit()
+#     db.refresh(db_item)
+
+#     return db_item
+
+
+# def update_menu_item(
+#     db,
+#     item_id: int,
+#     menu_item: schemas.MenuItemCreate,
+# ):
+#     db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
+#     if db_item is None:
+#         raise HTTPException(status_code=404, detail="Menu item not found")
+
+#     menu_item_dict = menu_item.dict()
+#     image_url = menu_item_dict.pop("image_url", None)
+
+#     for key, value in menu_item_dict.items():
+#         setattr(db_item, key, value)
+
+#     if image_url:
+#         db_item.image_base64 = _image_url_to_base64(image_url)
+
+#     db.add(db_item)
+#     db.commit()
+#     db.refresh(db_item)
+#     return db_item
+
+
+# def delete_menu_item(db, item_id: int):
+#     existing_order_item = (
+#         db.query(OrderItem).filter(OrderItem.menu_item_id == item_id).first()
+#     )
+#     if existing_order_item is not None:
 #         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Only Chef is authorized to add Chef role!",
+#             status_code=409,
+#             detail="You can not delete this menu item, it is associated with existing orders.",
 #         )
 
-#     db_user = update_user(db, user.username, user)
-#     return current_user
+#     db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
+#     if db_item is None:
+#         raise HTTPException(status_code=404, detail="Menu item not found")
+
+#     db.delete(db_item)
+#     db.commit()
+
+#Código corregido
+import base64
+
+import requests
+from urllib.parse import urlparse 
+from apis.menu import schemas
+from db.models import MenuItem, OrderItem
+from fastapi import HTTPException
 
 
-from apis.auth.utils import RolesBasedAuthChecker, get_current_user, update_user
-from apis.users.schemas import UserRoleUpdate
-from db import models
-from db.session import get_db
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from typing_extensions import Annotated
+def _image_url_to_base64(image_url: str):
+    dominio = urlparse (image_url).hostname
+    if dominio not in ["cdn.localhost"]:
+        raise HTTPException(satatus_code=403, detail="Only images from cdn.localhost are allowed")
+    response = requests.get(image_url, stream=True)
+    encoded_image = base64.b64encode(response.content).decode()
 
-router = APIRouter()
+    return encoded_image
 
 
-@router.put("/users/update_role", response_model=UserRoleUpdate)
-async def update_user_role(
-    user: UserRoleUpdate,
-    current_user: Annotated[models.User, Depends(get_current_user)],
-    db: Session = Depends(get_db), 
-    auth=Depends(RolesBasedAuthChecker([models.UserRole.CHEF])),
+def create_menu_item(
+    db,
+    menu_item: schemas.MenuItemCreate,
 ):
-    # this method allows staff to give Employee role to other users
-    # Chef role is restricted
-    if user.role == models.UserRole.CHEF.value and current_user.role != models.UserRole.CHEF.value:
+    menu_item_dict = menu_item.dict()
+    image_url = menu_item_dict.pop("image_url", None)
+    db_item = MenuItem(**menu_item_dict)
+
+    if image_url:
+        db_item.image_base64 = _image_url_to_base64(image_url)
+
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+
+    return db_item
+
+
+def update_menu_item(
+    db,
+    item_id: int,
+    menu_item: schemas.MenuItemCreate,
+):
+    db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Menu item not found")
+
+    menu_item_dict = menu_item.dict()
+    image_url = menu_item_dict.pop("image_url", None)
+
+    for key, value in menu_item_dict.items():
+        setattr(db_item, key, value)
+
+    if image_url:
+        db_item.image_base64 = _image_url_to_base64(image_url)
+
+    db.add(db_item)
+    db.commit()
+    db.refresh(db_item)
+    return db_item
+
+
+def delete_menu_item(db, item_id: int):
+    existing_order_item = (
+        db.query(OrderItem).filter(OrderItem.menu_item_id == item_id).first()
+    )
+    if existing_order_item is not None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Only Chef is authorized to add Chef role!",
+            status_code=409,
+            detail="You can not delete this menu item, it is associated with existing orders.",
         )
 
-    db_user = update_user(db, user.username, user)
-    return current_user
+    db_item = db.query(MenuItem).filter(MenuItem.id == item_id).first()
+    if db_item is None:
+        raise HTTPException(status_code=404, detail="Menu item not found")
+
+    db.delete(db_item)
+    db.commit()

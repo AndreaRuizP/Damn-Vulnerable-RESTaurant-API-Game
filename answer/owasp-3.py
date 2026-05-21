@@ -1,77 +1,55 @@
-# from typing import Union
-
-# from apis.auth.utils import get_current_user, get_user_by_username
-# from db.models import User
+# from apis.auth.utils import RolesBasedAuthChecker, get_current_user, update_user
+# from apis.users.schemas import UserRoleUpdate
+# from db import models
 # from db.session import get_db
-# from fastapi import APIRouter, Depends, status
-# from pydantic import BaseModel
+# from fastapi import APIRouter, Depends, HTTPException, status
 # from sqlalchemy.orm import Session
 # from typing_extensions import Annotated
 
 # router = APIRouter()
 
 
-# class UserUpdate(BaseModel):
-#     username: str
-#     first_name: Union[str, None] = None
-#     last_name: Union[str, None] = None
-#     phone_number: Union[str, None] = None
-
-
-# @router.put("/profile", response_model=UserUpdate, status_code=status.HTTP_200_OK)
-# def update_profile(
-#     user: UserUpdate,
-#     current_user: Annotated[User, Depends(get_current_user)],
+# @router.put("/users/update_role", response_model=UserRoleUpdate)
+# async def update_user_role(
+#     user: UserRoleUpdate,
+#     current_user: Annotated[models.User, Depends(get_current_user)],
 #     db: Session = Depends(get_db),
 # ):
-#     db_user = get_user_by_username(db, user.username)
+#     # this method allows staff to give Employee role to other users
+#     # Chef role is restricted
+#     if user.role == models.UserRole.CHEF.value:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Only Chef is authorized to add Chef role!",
+#         )
 
-#     for var, value in user.dict().items():
-#         if value:
-#             setattr(db_user, var, value)
+#     db_user = update_user(db, user.username, user)
+#     # return current_user
 
-#     db.add(db_user)
-#     db.commit()
-#     db.refresh(db_user)
-
-#     return db_user
-
-
-from typing import Union
-
-from apis.auth.utils import get_current_user, get_user_by_username
-from db.models import User
+from apis.auth.utils import RolesBasedAuthChecker, get_current_user, update_user
+from apis.users.schemas import UserRoleUpdate
+from db import models
 from db.session import get_db
-from fastapi import APIRouter, Depends, status
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing_extensions import Annotated
 
 router = APIRouter()
 
 
-class UserUpdate(BaseModel):
-    username: str
-    first_name: Union[str, None] = None
-    last_name: Union[str, None] = None
-    phone_number: Union[str, None] = None
-
-
-@router.put("/profile", response_model=UserUpdate, status_code=status.HTTP_200_OK)
-def update_profile(
-    user: UserUpdate,
-    current_user: Annotated[User, Depends(get_current_user)],
-    db: Session = Depends(get_db),
+@router.put("/users/update_role", response_model=UserRoleUpdate)
+async def update_user_role(
+    user: UserRoleUpdate,
+    current_user: Annotated[models.User, Depends(get_current_user)],
+    db: Session = Depends(get_db), 
+    auth=Depends(RolesBasedAuthChecker([models.UserRole.CHEF])),
 ):
-    db_user = current_user
-    update_data = user.dict(exclude_unset=True)
 
-    for var, value in update_data.items():
-        setattr(db_user, var, value)
+    if user.role == models.UserRole.CHEF.value and current_user.role != models.UserRole.CHEF.value:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Only Chef is authorized to add Chef role!",
+        )
 
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-
-    return db_user
-
+    db_user = update_user(db, user.username, user)
+    return current_user

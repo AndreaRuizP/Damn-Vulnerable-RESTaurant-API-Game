@@ -14,15 +14,13 @@
 
 #     return usage
 
+#Código corregido
 
 import subprocess
 
+
 def get_disk_usage(parameters: str):
-    # La forma más básica de asegurar esto es usar una lista en lugar de un string
     command = ["df", "-h"]
-    
-    if parameters:
-        command.extend(parameters.split())
 
     try:
         result = subprocess.run(
