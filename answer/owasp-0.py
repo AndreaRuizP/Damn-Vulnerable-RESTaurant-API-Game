@@ -1,13 +1,13 @@
-#from fastapi import APIRouter, Response
+# from fastapi import APIRouter, Response
 
 
-#router = APIRouter()
+# router = APIRouter()
 
 
-#@router.get("/healthcheck")
-#def healthcheck(response: Response):
+# @router.get("/healthcheck")
+# def healthcheck(response: Response):
 #   response.headers["X-Powered-By"] = "Python 3.10, FastAPI ^0.103.0"
-#   return {"ok": True}`
+#   return {"ok": True}
 
 #Código Corregido
 from fastapi import APIRouter, Response
